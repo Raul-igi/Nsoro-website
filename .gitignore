@@ -1,0 +1,26 @@
+# .gitignore — tells Git which files to leave out of the project history,
+# so they never get uploaded to GitHub.
+
+# macOS system files: the Finder creates these automatically in every folder.
+# They hold window/icon settings, not website content.
+.DS_Store
+._*
+
+# Windows system files: same idea as above, in case anyone edits on Windows.
+Thumbs.db
+Desktop.ini
+
+# Code editor settings: personal to each person's setup, not part of the site.
+.vscode/
+.idea/
+
+# Installed packages: if the site later uses npm, these can be re-downloaded
+# with "npm install", so there's no need to store them on GitHub.
+node_modules/
+
+# Secret settings (passwords, API keys): these must never be shared publicly.
+.env
+.env.*
+
+# Log files: temporary output from tools, not useful to keep.
+*.log
