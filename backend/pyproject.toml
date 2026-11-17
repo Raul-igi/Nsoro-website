@@ -1,0 +1,45 @@
+# Project settings for the Nsoro backend (Django API).
+# Managed with uv: `uv add <package>` updates this file and uv.lock.
+[project]
+name = "nsoro-backend"
+version = "0.1.0"
+description = "Django REST API for the Nsoro clothing store"
+readme = "README.md"
+requires-python = ">=3.13"
+
+# Packages the backend needs to run:
+# - django: the web framework (database models, admin panel, user accounts)
+# - djangorestframework: turns Django data into a JSON API for React
+# - django-cors-headers: lets the React site call the API from another address
+# - django-environ: reads settings (like database URL) from the .env file
+# - pillow: handles product image uploads
+# - psycopg: connects Django to PostgreSQL
+# - gunicorn: production web server for when the site goes live
+dependencies = [
+    "django>=6.1.3",
+    "django-cors-headers>=4.9.0",
+    "django-environ>=0.14.0",
+    "djangorestframework>=3.18.3",
+    "gunicorn>=27.0.1",
+    "pillow>=13.0.0",
+    "psycopg[binary]>=3.3.9",
+]
+
+# Tools only used while developing (not needed on the live server):
+# - pytest + pytest-django: run automated tests
+# - ruff: checks code for mistakes and formats it consistently
+[dependency-groups]
+dev = [
+    "pytest>=9.2.0",
+    "pytest-django>=4.14.0",
+    "ruff>=0.17.5",
+]
+
+# Tell pytest which Django settings to use when running tests.
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings"
+
+# Ruff settings: max line length and the Python version to check against.
+[tool.ruff]
+line-length = 100
+target-version = "py313"

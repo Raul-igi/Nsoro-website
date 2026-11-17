@@ -19,8 +19,27 @@ Desktop.ini
 node_modules/
 
 # Secret settings (passwords, API keys): these must never be shared publicly.
+# The "!" line makes an exception: .env.example holds no secrets, only
+# placeholder values, so it IS shared to show which settings are needed.
 .env
 .env.*
+!.env.example
+
+# Python files: the virtual environment (re-created with "uv sync") and
+# compiled-code caches that Python generates automatically.
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+
+# Build output: the frontend's production build (re-created with "npm run build")
+# and Django's collected static files.
+dist/
+staticfiles/
+
+# Uploaded product photos: these belong in cloud storage, not in Git.
+media/
 
 # Log files: temporary output from tools, not useful to keep.
 *.log
