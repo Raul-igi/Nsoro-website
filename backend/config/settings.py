@@ -77,6 +77,13 @@ TEMPLATES = [
 # (for example postgres://localhost:5432/nsoro).
 DATABASES = {"default": env.db("DATABASE_URL")}
 
+# Speed: keep each database connection open for up to 60 seconds and reuse it for
+# the next requests, instead of opening a brand-new connection every time (which adds
+# delay to every page that reads the database). The health check makes sure a reused
+# connection still works before using it, so a dropped connection can't cause errors.
+DATABASES["default"]["CONN_MAX_AGE"] = 60
+DATABASES["default"]["CONN_HEALTH_CHECKS"] = True
+
 # Password rules for user accounts: block passwords that are too similar
 # to the username, too short, too common, or only numbers.
 AUTH_PASSWORD_VALIDATORS = [

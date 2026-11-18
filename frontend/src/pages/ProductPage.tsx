@@ -1,12 +1,16 @@
 // ProductPage: one product, with the page turned to the chosen colour.
-// The pictures (cut-outs, then any full campaign photos) are stacked so you scroll
-// through the angles;
-// thumbnails sit bottom-left, and the details card and add-to-cart bar sit bottom-right.
+// The pictures (cut-outs, then any full campaign photos) show the different angles:
+// - Computers with a mouse: the pictures are stacked so you scroll down through them;
+//   thumbnails sit bottom-left, and the details card and add-to-cart bar bottom-right.
+// - Phones and tablets (touch screens): the pictures sit side by side and you swipe
+//   left and right through them, with dots showing which one you're on. The details
+//   card follows below, and add-to-cart stays pinned to the bottom of the screen.
 import { useEffect, useRef, useState } from "react";
 import { Link, useParams, useSearchParams } from "react-router";
 import { SizeChart } from "../components/SizeChart";
 import { formatPrice } from "../config/store";
 import { findProduct, type Size } from "../data/products";
+import { SCROLL_SHOP_QUERY, useMediaQuery } from "../lib/useMediaQuery";
 import { useCart } from "../store/cart";
 import { useUi } from "../store/ui";
 
@@ -70,6 +74,9 @@ function ProductView({ product, colorwayId, onPickColour }: ViewProps) {
   const [chartOpen, setChartOpen] = useState(false);
   const [activeImage, setActiveImage] = useState(0);
   const imageRefs = useRef<(HTMLDivElement | null)[]>([]);
+  // Touch screens (phones, tablets) get the left-right swipe gallery instead of the
+  // stacked pictures; the same check the shop page uses.
+  const touchLayout = useMediaQuery(SCROLL_SHOP_QUERY);
 
   // Sold out entirely: has sizes, but every one is sold out.
   const soldOut = product.sizes.length > 0 && firstAvailable === null;
@@ -115,55 +122,67 @@ function ProductView({ product, colorwayId, onPickColour }: ViewProps) {
 
   return (
     <main className="relative pb-24 lg:pb-0">
-      {/* The stacked pictures, one screen-height each, centred on the page.
+      {touchLayout ? (
+        // Phones and tablets: swipe left and right through the pictures.
+        <SwipeGallery
+          images={colorway.images}
+          altFor={(index) =>
+            `${product.name} in ${colorway.name}, picture ${index + 1} of ${colorway.images.length}`
+          }
+        />
+      ) : (
+        <>
+          {/* The stacked pictures, one screen-height each, centred on the page.
           On wide screens each picture is limited in width so it stays clear of the
           details card: the card plus its gaps takes 428px on the right, so the picture
           may use the page width minus that amount on both sides (at most 520px, and
           never smaller than 220px). */}
-      <div className="flex flex-col items-center pt-20 lg:pt-0">
-        {colorway.images.map((src, index) => (
-          <div
-            key={src}
-            ref={(el) => {
-              imageRefs.current[index] = el;
-            }}
-            data-index={index}
-            className="flex min-h-[60dvh] w-full items-center justify-center px-6 lg:min-h-dvh"
-          >
-            <img
-              src={src}
-              alt={`${product.name} in ${colorway.name}, picture ${index + 1} of ${colorway.images.length}`}
-              // Cut-outs float freely; full campaign photos (from /lookbook/) keep
-              // their natural shape and get soft corners and a shadow like a print.
-              className={`max-h-[58dvh] max-w-[520px] object-contain lg:max-h-[64dvh] lg:max-w-[max(220px,min(520px,calc(100vw-856px)))] ${
-                src.includes("/lookbook/")
-                  ? "w-auto rounded-lg shadow-2xl"
-                  : "w-full"
-              }`}
-            />
+          <div className="flex flex-col items-center pt-20 lg:pt-0">
+            {colorway.images.map((src, index) => (
+              <div
+                key={src}
+                ref={(el) => {
+                  imageRefs.current[index] = el;
+                }}
+                data-index={index}
+                className="flex min-h-[60dvh] w-full items-center justify-center px-6 lg:min-h-dvh"
+              >
+                <img
+                  src={src}
+                  alt={`${product.name} in ${colorway.name}, picture ${index + 1} of ${colorway.images.length}`}
+                  // Cut-outs float freely; full campaign photos (from /lookbook/) keep
+                  // their natural shape and get soft corners and a shadow like a print.
+                  className={`max-h-[58dvh] max-w-[520px] object-contain lg:max-h-[64dvh] lg:max-w-[max(220px,min(520px,calc(100vw-856px)))] ${
+                    src.includes("/lookbook/")
+                      ? "w-auto rounded-lg shadow-2xl"
+                      : "w-full"
+                  }`}
+                />
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
 
-      {/* Thumbnails: fixed bottom-left on wide screens. */}
-      <div className="glass fixed bottom-6 left-6 z-10 hidden gap-1 rounded-xl p-1.5 lg:flex">
-        {colorway.images.map((src, index) => (
-          <button
-            key={src}
-            type="button"
-            onClick={() => showImage(index)}
-            aria-label={`Show picture ${index + 1}`}
-            aria-current={activeImage === index}
-            className={`size-16 rounded-lg border p-1 transition-colors ${
-              activeImage === index
-                ? "border-current bg-white/20"
-                : "border-transparent"
-            }`}
-          >
-            <img src={src} alt="" className="size-full object-contain" />
-          </button>
-        ))}
-      </div>
+          {/* Thumbnails: fixed bottom-left on wide screens. */}
+          <div className="glass fixed bottom-6 left-6 z-10 hidden gap-1 rounded-xl p-1.5 lg:flex">
+            {colorway.images.map((src, index) => (
+              <button
+                key={src}
+                type="button"
+                onClick={() => showImage(index)}
+                aria-label={`Show picture ${index + 1}`}
+                aria-current={activeImage === index}
+                className={`size-16 rounded-lg border p-1 transition-colors ${
+                  activeImage === index
+                    ? "border-current bg-white/20"
+                    : "border-transparent"
+                }`}
+              >
+                <img src={src} alt="" className="size-full object-contain" />
+              </button>
+            ))}
+          </div>
+        </>
+      )}
 
       {/* Details card and add-to-cart: fixed bottom-right on wide screens,
           and in the normal page flow (after the pictures) on phones. */}
@@ -269,5 +288,83 @@ function ProductView({ product, colorwayId, onPickColour }: ViewProps) {
         <SizeChart product={product} onClose={() => setChartOpen(false)} />
       )}
     </main>
+  );
+}
+
+// SwipeGallery: the phone picture viewer on the product page. The pictures sit side by
+// side in a row; you swipe left and right, and each picture snaps neatly into the
+// middle. It uses the phone's own sideways scrolling, which is smooth on iPhone.
+// Dots underneath show which picture you're on, and tapping a dot jumps to it.
+function SwipeGallery({
+  images,
+  altFor,
+}: {
+  images: string[];
+  altFor: (index: number) => string;
+}) {
+  const rowRef = useRef<HTMLDivElement | null>(null);
+  const [current, setCurrent] = useState(0);
+
+  // While swiping, work out which picture is in the middle from how far the row has
+  // scrolled (each picture is exactly one row-width wide).
+  function onScroll() {
+    const row = rowRef.current;
+    if (!row) return;
+    setCurrent(Math.round(row.scrollLeft / row.clientWidth));
+  }
+
+  // Tapping a dot glides the row to that picture.
+  function showPicture(index: number) {
+    const row = rowRef.current;
+    row?.scrollTo({ left: index * row.clientWidth, behavior: "smooth" });
+  }
+
+  return (
+    <div className="pt-20">
+      {/* The row of pictures. snap-x/snap-center make each picture settle in the
+          middle; the scrollbar is hidden, and overscroll-x-contain keeps a swipe at
+          the ends from moving the whole page. */}
+      <div
+        ref={rowRef}
+        onScroll={onScroll}
+        className="flex snap-x snap-mandatory overflow-x-auto overscroll-x-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      >
+        {images.map((src, index) => (
+          // One full-width slide per picture, centred.
+          <div
+            key={src}
+            className="flex h-[58svh] w-full shrink-0 snap-center items-center justify-center px-8"
+          >
+            <img
+              src={src}
+              alt={altFor(index)}
+              loading="eager"
+              draggable={false}
+              // Cut-outs float freely; full campaign photos keep their shape with soft
+              // corners, like on the computer layout.
+              className={`max-h-full max-w-full object-contain ${
+                src.includes("/lookbook/") ? "rounded-lg" : ""
+              }`}
+            />
+          </div>
+        ))}
+      </div>
+
+      {/* The dots: one per picture, the current one filled in. */}
+      <div className="flex justify-center gap-2 py-5">
+        {images.map((src, index) => (
+          <button
+            key={src}
+            type="button"
+            onClick={() => showPicture(index)}
+            aria-label={`Show picture ${index + 1} of ${images.length}`}
+            aria-current={current === index}
+            className={`size-2 rounded-full border border-current transition-colors ${
+              current === index ? "bg-current" : "bg-transparent"
+            }`}
+          />
+        ))}
+      </div>
+    </div>
   );
 }

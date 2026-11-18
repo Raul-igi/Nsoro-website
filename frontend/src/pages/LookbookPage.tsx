@@ -101,9 +101,16 @@ export function LookbookPage() {
               aria-label={`Open photo: ${p.alt}`}
             >
               <img
-                src={`/lookbook/${p.id}.webp`}
+                // Two sizes of each photo: the browser picks the small one (540px) for
+                // the grid on most screens and the full one (1080px) only when the photo
+                // is shown wide (one column on a large phone, or sharp screens).
+                src={`/lookbook/${p.id}-sm.webp`}
+                srcSet={`/lookbook/${p.id}-sm.webp 540w, /lookbook/${p.id}.webp 1080w`}
+                sizes="(min-width: 1024px) 31vw, (min-width: 640px) 47vw, 92vw"
                 alt={p.alt}
+                // Only the first row loads right away; the rest load as you scroll.
                 loading={index < 3 ? "eager" : "lazy"}
+                decoding="async"
                 width={1080}
                 height={1350}
                 className="h-auto w-full transition-transform duration-500 hover:scale-[1.03] motion-reduce:transition-none"

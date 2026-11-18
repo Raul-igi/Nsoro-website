@@ -18,6 +18,28 @@
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <!-- Paint the page dark denim straight away, before the main stylesheet arrives,
+         so visitors never see a white flash while the site loads. -->
+    <style>
+      html {
+        background: #152837;
+      }
+    </style>
+
+    <!-- Welcome page only: start downloading the full-screen welcome photo right now,
+         at the same time as the site's code, instead of waiting for the code to run
+         first. Other pages skip this so they don't download a photo they won't show. -->
+    <script>
+      if (location.pathname === "/") {
+        const preload = document.createElement("link");
+        preload.rel = "preload";
+        preload.as = "image";
+        preload.href = "/lookbook/ED241652.webp";
+        preload.fetchPriority = "high";
+        document.head.appendChild(preload);
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

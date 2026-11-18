@@ -16,6 +16,8 @@ export function WelcomePage() {
       <img
         src={PHOTO}
         alt={PHOTO_ALT}
+        // The most important picture on the page: download it before anything else.
+        fetchPriority="high"
         className="absolute inset-0 size-full object-cover object-[50%_30%]"
       />
 

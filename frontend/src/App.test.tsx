@@ -7,13 +7,16 @@ import { HOME_ITEMS } from "./data/products";
 import { countItems, subtotal, useCart } from "./store/cart";
 import { useUi } from "./store/ui";
 
-// Show the app at a given address, as if the visitor typed it in.
-function renderAt(path: string) {
-  return render(
+// Show the app at a given address, as if the visitor typed it in, then wait until
+// the page has appeared (most pages are loaded on demand, so they take a moment).
+async function renderAt(path: string) {
+  const result = render(
     <MemoryRouter initialEntries={[path]}>
       <App />
     </MemoryRouter>,
   );
+  await screen.findByRole("main");
+  return result;
 }
 
 // Start every test with an empty cart and everything closed.
@@ -24,8 +27,8 @@ beforeEach(() => {
 
 describe("welcome page", () => {
   // The welcome page shows the campaign headline and a Discover button into the shop.
-  it("shows the headline and links Discover to the shop", () => {
-    renderAt("/");
+  it("shows the headline and links Discover to the shop", async () => {
+    await renderAt("/");
     expect(
       screen.getByRole("heading", { name: "Gorillas Must Be Aliens" }),
     ).toBeInTheDocument();
@@ -37,7 +40,7 @@ describe("welcome page", () => {
 
   // The hamburger opens the menu, which lists the shop pages.
   it("opens the menu from the hamburger button", async () => {
-    renderAt("/");
+    await renderAt("/");
     await userEvent.click(screen.getByRole("button", { name: "Open menu" }));
     const menu = screen.getByRole("navigation", { name: "Main" });
     expect(
@@ -48,8 +51,8 @@ describe("welcome page", () => {
 
 describe("shop page", () => {
   // There should be one floating link per homepage picture.
-  it("shows every homepage picture as a product link", () => {
-    renderAt("/shop");
+  it("shows every homepage picture as a product link", async () => {
+    await renderAt("/shop");
     const links = screen
       .getAllByRole("link")
       .filter((l) => l.getAttribute("href")?.startsWith("/product/"));
@@ -58,7 +61,7 @@ describe("shop page", () => {
 
   // Pointing at an item turns the page that item's colour.
   it("changes the background colour on hover", async () => {
-    renderAt("/shop");
+    await renderAt("/shop");
     const item = HOME_ITEMS[1];
     const link = screen
       .getAllByRole("link")
@@ -79,17 +82,25 @@ describe("shop page on a touch screen", () => {
 
   // Phones get one product per screen, a position counter, and the first
   // product's colour straight away (there's no mouse to hover with).
-  it("shows products one at a time and colours the page by the first one", () => {
-    renderAt("/shop");
+  it("shows products one at a time and colours the page by the first one", async () => {
+    await renderAt("/shop");
     expect(screen.getByText(`1 / ${HOME_ITEMS.length}`)).toBeInTheDocument();
     expect(useUi.getState().background).toBe(HOME_ITEMS[0].background);
+  });
+
+  // On phones the product page shows the angles side by side with one dot each.
+  it("shows the product pictures as a sideways gallery with dots", async () => {
+    await renderAt("/product/denim-suit");
+    expect(
+      screen.getAllByRole("button", { name: /^Show picture \d of 4$/ }),
+    ).toHaveLength(4);
   });
 });
 
 describe("product page", () => {
   // Adding to cart puts the chosen size in the cart and opens the cart panel.
   it("adds the chosen size to the cart", async () => {
-    renderAt("/product/suede-desert-boots");
+    await renderAt("/product/suede-desert-boots");
     // EU 39 is sold out, so it can't be chosen and EU 40 is picked to start.
     expect(
       screen.getByRole("button", { name: "EU 39, sold out" }),
@@ -105,8 +116,8 @@ describe("product page", () => {
   });
 
   // A bad product link explains itself instead of showing a blank page.
-  it("handles a product that does not exist", () => {
-    renderAt("/product/nothing-here");
+  it("handles a product that does not exist", async () => {
+    await renderAt("/product/nothing-here");
     expect(
       screen.getByRole("heading", { name: "This product isn't available" }),
     ).toBeInTheDocument();
@@ -115,8 +126,8 @@ describe("product page", () => {
 
 describe("lookbook", () => {
   // All 15 campaign photos appear on the lookbook page.
-  it("shows every campaign photo", () => {
-    renderAt("/lookbook");
+  it("shows every campaign photo", async () => {
+    await renderAt("/lookbook");
     expect(screen.getAllByRole("button", { name: /^Open photo/ })).toHaveLength(
       15,
     );
@@ -125,7 +136,7 @@ describe("lookbook", () => {
 
 describe("cart maths", () => {
   // Adding the same item twice raises its quantity rather than adding a new line.
-  it("counts items and adds up the subtotal", () => {
+  it("counts items and adds up the subtotal", async () => {
     const { add } = useCart.getState();
     add({ slug: "denim-suit", colorwayId: "denim", size: "M" });
     add({ slug: "denim-suit", colorwayId: "denim", size: "M" });
@@ -139,8 +150,8 @@ describe("cart maths", () => {
 
 describe("checkout", () => {
   // With an empty cart, checkout points people back to the shop.
-  it("shows an empty state with no items", () => {
-    renderAt("/checkout");
+  it("shows an empty state with no items", async () => {
+    await renderAt("/checkout");
     expect(
       screen.getByRole("heading", { name: "Your cart is empty" }),
     ).toBeInTheDocument();
