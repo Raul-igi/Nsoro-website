@@ -36,7 +36,11 @@ export const MENU_LINKS = [
   { label: "Lookbook", to: "/lookbook" },
   { label: "Contact", to: "/contact" },
   { label: "Policies", to: "/policies" },
-  { label: "Instagram", to: "https://instagram.com", external: true },
+  {
+    label: "Instagram",
+    to: "https://www.instagram.com/nsorohq/",
+    external: true,
+  },
 ] as const;
 
 // Turn a number into a price label like "USD 85.00".

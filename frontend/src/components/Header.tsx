@@ -29,7 +29,8 @@ export function Header() {
             aria-expanded={menuOpen}
             aria-controls="site-menu"
             aria-label="Open menu"
-            className={iconButton}
+            // Hidden while the menu is open, so it doesn't show under the menu's ✕.
+            className={`${iconButton} ${menuOpen ? "invisible" : ""}`}
           >
             <MenuIcon />
           </button>
@@ -94,21 +95,24 @@ function MenuDrawer() {
 
   return (
     <>
-      {/* Dimmed layer over the page while the menu is open; clicking it closes the menu. */}
+      {/* Very light dimming over the page while the menu is open (kept light so the
+          see-through menu still shows the page); clicking it closes the menu. */}
       <div
         aria-hidden="true"
         onClick={close}
-        className={`fixed inset-0 z-40 bg-black/30 backdrop-blur-[2px] transition-opacity duration-300 ${
+        className={`fixed inset-0 z-40 bg-black/15 transition-opacity duration-300 ${
           menuOpen ? "opacity-100" : "pointer-events-none opacity-0"
         }`}
       />
 
-      {/* The sliding panel itself. */}
+      {/* The sliding panel itself: no background colour and no border, just a soft
+          blur of the page behind it, so the menu reads as frosted, see-through glass.
+          White text with a faint shadow stays readable over any photo or colour. */}
       <nav
         id="site-menu"
         aria-label="Main"
         inert={!menuOpen}
-        className={`glass-solid fixed inset-y-0 left-0 z-50 flex w-[min(340px,86vw)] flex-col p-6 transition-transform duration-300 ease-out motion-reduce:transition-none ${
+        className={`fixed inset-y-0 left-0 z-50 flex w-[min(340px,86vw)] flex-col p-6 text-white backdrop-blur-xl [text-shadow:0_1px_8px_rgb(0_0_0/0.3)] transition-transform duration-300 ease-out motion-reduce:transition-none ${
           menuOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
@@ -117,7 +121,7 @@ function MenuDrawer() {
           type="button"
           onClick={close}
           aria-label="Close menu"
-          className="grid size-10 place-items-center self-start rounded-full hover:bg-ink/10"
+          className="grid size-10 place-items-center self-start rounded-full hover:bg-white/15"
         >
           <CloseIcon />
         </button>
@@ -146,7 +150,7 @@ function MenuDrawer() {
         </ul>
 
         {/* Currency at the bottom of the menu. A currency switcher can go here later. */}
-        <p className="mt-auto font-mono text-sm text-slate">
+        <p className="mt-auto font-mono text-sm text-white/75">
           Prices in {CURRENCY}
         </p>
       </nav>
