@@ -4,7 +4,7 @@
 // Payments aren't connected yet, so "Place order" explains that instead of charging.
 import { useState, type FormEvent } from "react";
 import { Link } from "react-router";
-import { BagIcon } from "../components/icons";
+import { BagIcon, ChevronDownIcon } from "../components/icons";
 import {
   formatPrice,
   SHIPPING_COUNTRIES,
@@ -90,19 +90,31 @@ export function CheckoutPage() {
             {/* Delivery address. */}
             <section className="flex flex-col gap-3">
               <h2 className="text-2xl font-semibold text-slate">Delivery</h2>
-              <label className="relative">
+              {/* Country box: the small "Country/Region" caption sits inside the top of
+                  the dropdown. `relative` keeps that caption inside this box, and
+                  htmlFor/id link the caption to the dropdown for screen readers. */}
+              <label htmlFor="country" className="relative">
                 <span className="absolute top-2 left-4 text-xs text-slate">
                   Country/Region
                 </span>
+                {/* appearance-none turns off the browser's own dropdown look. Safari
+                    ignores inner spacing on its built-in dropdown, which pushed the
+                    chosen country up into the caption; without it the spacing below
+                    works in every browser. We draw our own arrow instead. */}
                 <select
+                  id="country"
                   required
-                  className={`${field} pt-6 pb-2`}
+                  className={`${field} h-14 appearance-none pt-6 pr-10 pb-2`}
                   defaultValue={SHIPPING_COUNTRIES[0]}
                 >
                   {SHIPPING_COUNTRIES.map((c) => (
                     <option key={c}>{c}</option>
                   ))}
                 </select>
+                {/* Our own dropdown arrow, on the right. Clicks pass through it to the dropdown. */}
+                <span className="pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-slate">
+                  <ChevronDownIcon />
+                </span>
               </label>
               <div className="grid gap-3 sm:grid-cols-2">
                 <input
@@ -192,12 +204,12 @@ export function CheckoutPage() {
               </p>
             </section>
 
-            {/* Place order, plus the message explaining the preview state. */}
+            {/* Place order, plus the message explaining the preview state.
+                The button uses the shared black button style in its "rise" version
+                (btn-black + btn-black-rise in index.css): 40% black at rest, solid
+                black on hover, the reverse of Discover on the welcome page. */}
             <div className="flex flex-col gap-3">
-              <button
-                type="submit"
-                className="rounded-lg bg-slate py-4 text-lg font-medium text-white hover:bg-ink"
-              >
+              <button type="submit" className="btn-black btn-black-rise w-full">
                 Place order
               </button>
               {orderNote && (

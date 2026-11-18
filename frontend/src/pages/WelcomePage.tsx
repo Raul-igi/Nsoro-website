@@ -34,11 +34,10 @@ export function WelcomePage() {
           Gorillas Must Be Aliens
         </h1>
 
-        {/* Discover: goes to the shop page with all the floating products. */}
-        <Link
-          to="/shop"
-          className="mt-8 flex h-14 w-full max-w-[320px] items-center justify-center bg-black text-sm font-medium tracking-[0.12em] text-white uppercase transition-colors hover:bg-white hover:text-black"
-        >
+        {/* Discover: goes to the shop page with all the floating products. It uses the
+            shared black button style (btn-black in index.css); only its size and
+            spacing are set here. */}
+        <Link to="/shop" className="btn-black mt-8 w-full max-w-[320px]">
           Discover
         </Link>
       </div>

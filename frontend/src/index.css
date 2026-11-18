@@ -120,6 +120,46 @@ body {
   }
 }
 
+/* SHARED BUTTON STYLES
+   Every button of the same kind uses the same class, so they always look and behave
+   alike across the whole site. Change a style here and every matching button updates.
+   (Size and position, like width or margin, are still set where each button is used.)
+
+   btn-black: the black button. Black with white, spaced-out capitals.
+   Its two shades (resting and hover/focus) are kept in variables so a variant can
+   swap them while sharing everything else:
+   - btn-black on its own ("Discover", over a photo): solid black that fades to 40%
+     on hover, so the photo glows through.
+   - btn-black + btn-black-rise ("Place order", on a light page): the reverse. It
+     rests at 40% black and becomes solid black on hover, so on a light page it
+     looks like it switches on instead of fading away. */
+@utility btn-black {
+  --btn-black-rest: rgb(0 0 0);
+  --btn-black-active: rgb(0 0 0 / 0.4);
+  display: flex;
+  height: 3.5rem;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--btn-black-rest);
+  color: rgb(255 255 255);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition: background-color 0.3s ease;
+
+  &:hover,
+  &:focus-visible {
+    background-color: var(--btn-black-active);
+  }
+}
+
+/* The "rise" variant: swaps the two shades (40% at rest, solid black on hover). */
+@utility btn-black-rise {
+  --btn-black-rest: rgb(0 0 0 / 0.4);
+  --btn-black-active: rgb(0 0 0);
+}
+
 /* Frosted-glass surfaces: the logo pill, menu pill, cards and panels.
    Tinted by the page colour, with a bright rim and soft inner shading. */
 .glass {

@@ -126,8 +126,10 @@ function MenuDrawer() {
           <CloseIcon />
         </button>
 
-        {/* The links, large and stacked. */}
-        <ul className="mt-8 flex flex-col gap-4 text-2xl font-semibold uppercase [font-stretch:115%]">
+        {/* The links, stacked. Same lettering as the welcome page's Discover button
+            (Archivo at normal width, medium weight, capitals with wide letter spacing),
+            just a little larger so they're easy to tap. */}
+        <ul className="mt-8 flex flex-col gap-5 text-base font-medium tracking-[0.12em] uppercase">
           {MENU_LINKS.map((link) => (
             <li key={link.label}>
               {/* Outside links (Instagram) open in a new tab; shop pages stay in this one. */}

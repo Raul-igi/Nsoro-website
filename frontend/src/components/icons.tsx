@@ -59,3 +59,12 @@ export function MenuIcon() {
     </svg>
   );
 }
+
+// A small downward arrow: marks a dropdown (e.g. the country picker at checkout).
+export function ChevronDownIcon() {
+  return (
+    <svg {...base} width={16} height={16} strokeWidth={2}>
+      <path d="M6 9l6 6 6-6" />
+    </svg>
+  );
+}
