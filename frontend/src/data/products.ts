@@ -1,9 +1,10 @@
-// TEMPLATE product catalogue. Names, prices, colours, pictures and size charts here are
-// placeholders so we can see the site working. Later this list will come from the
+// Product catalogue, using Nsoro's real campaign photos (from Media/NSORO LRES 2).
+// The pictures are real; the product NAMES, PRICES, SIZES and SIZE CHARTS are still
+// TEMPLATE values until the real ones are supplied. Later this list will come from the
 // Django backend, managed in the admin portal.
 
-// The sizes a garment can come in, smallest to largest.
-export type Size = "XS" | "S" | "M" | "L" | "XL" | "XXL";
+// A size label, e.g. "M" for clothes or "EU 42" for shoes.
+export type Size = string;
 
 // One colour version of a product: its own pictures and its own page background.
 export interface Colorway {
@@ -11,7 +12,7 @@ export interface Colorway {
   name: string;
   swatch: string; // the little colour dot shown on the product card
   background: string; // the colour the whole page turns when this item is shown
-  images: string[]; // pictures in order: front, back, close-up
+  images: string[]; // pictures in the order they appear on the product page
   soldOutSizes: Size[];
 }
 
@@ -23,7 +24,7 @@ export interface SizeChartRow {
 
 // A product as the shop sees it.
 export interface Product {
-  slug: string; // used in the page address, e.g. /product/studio-hoodie
+  slug: string; // used in the page address, e.g. /product/denim-suit
   name: string;
   description: string;
   price: number;
@@ -32,179 +33,131 @@ export interface Product {
   sizeChart?: SizeChartRow[];
 }
 
-// Size lists reused by several products.
-const APPAREL_SIZES: Size[] = ["XS", "S", "M", "L", "XL", "XXL"];
+// Where the background-free cut-outs and the full campaign photos live (in /public).
+const cutout = (id: string) => `/products/cutouts/${id}.webp`;
+const photo = (id: string) => `/lookbook/${id}.webp`;
 
-// Build the three picture paths for a colourway from the template image folder.
-function pictures(slug: string, colour: string) {
-  const base = `/templates/products/${slug}/${colour}`;
-  return [`${base}-front.svg`, `${base}-back.svg`, `${base}-detail.svg`];
-}
-
-// Shorthand for making a colourway entry.
-function colourway(
-  slug: string,
-  id: string,
-  name: string,
-  swatch: string,
-  background: string,
-  soldOutSizes: Size[] = [],
-): Colorway {
-  return {
-    id,
-    name,
-    swatch,
-    background,
-    images: pictures(slug, id),
-    soldOutSizes,
-  };
-}
-
-// The template catalogue itself.
+// The catalogue itself.
 export const PRODUCTS: Product[] = [
   {
-    slug: "studio-hoodie",
-    name: "Studio hoodie",
+    slug: "denim-suit",
+    name: "Denim suit", // TEMPLATE name
     description:
-      "Heavyweight brushed-back fleece with a roomy hood and kangaroo pocket.",
-    price: 95,
-    sizes: APPAREL_SIZES,
+      "Double-breasted denim blazer with matching tailored shorts, sold as a set.", // TEMPLATE
+    price: 240, // TEMPLATE price
+    sizes: ["XS", "S", "M", "L", "XL", "XXL"],
     colorways: [
-      colourway("studio-hoodie", "sand", "Sand", "#d9c4a1", "#a8906b", ["XXL"]),
-      colourway("studio-hoodie", "moss", "Moss", "#5b7046", "#3f5a3a"),
-      colourway("studio-hoodie", "ink", "Ink", "#2a2d33", "#3a3d42", [
-        "XL",
-        "XXL",
-      ]),
+      {
+        id: "denim",
+        name: "Denim",
+        swatch: "#3b5f86",
+        background: "#2f5a7a",
+        // Front and back cut-outs, the walking shot, then a close campaign photo.
+        images: [
+          cutout("ED241552"),
+          cutout("ED241613"),
+          cutout("ED241633"),
+          photo("ED241658"),
+        ],
+        soldOutSizes: ["XXL"],
+      },
     ],
+    // TEMPLATE measurements.
     sizeChart: [
       {
-        label: "Chest width",
-        values: ["56 cm", "59 cm", "62 cm", "65 cm", "68 cm", "71 cm"],
+        label: "Blazer chest",
+        values: ["52 cm", "55 cm", "58 cm", "61 cm", "64 cm", "67 cm"],
       },
       {
-        label: "Body length",
-        values: ["64 cm", "66 cm", "68 cm", "70 cm", "72 cm", "74 cm"],
+        label: "Blazer length",
+        values: ["72 cm", "74 cm", "76 cm", "78 cm", "80 cm", "82 cm"],
       },
       {
-        label: "Sleeve length",
-        values: ["60 cm", "61 cm", "62 cm", "63 cm", "64 cm", "65 cm"],
+        label: "Shorts waist",
+        values: ["72 cm", "76 cm", "80 cm", "84 cm", "88 cm", "92 cm"],
       },
     ],
   },
   {
-    slug: "zip-hoodie",
-    name: "Zip hoodie",
-    description: "Full-zip version of the studio hoodie, cut slightly cropped.",
-    price: 105,
-    sizes: APPAREL_SIZES,
-    colorways: [
-      colourway("zip-hoodie", "sky", "Sky", "#9fc4e8", "#6f9fcf"),
-      colourway("zip-hoodie", "bone", "Bone", "#e9e3d6", "#9c9586", ["XS"]),
-    ],
-    sizeChart: [
-      {
-        label: "Chest width",
-        values: ["55 cm", "58 cm", "61 cm", "64 cm", "67 cm", "70 cm"],
-      },
-      {
-        label: "Body length",
-        values: ["60 cm", "62 cm", "64 cm", "66 cm", "68 cm", "70 cm"],
-      },
-      {
-        label: "Sleeve length",
-        values: ["60 cm", "61 cm", "62 cm", "63 cm", "64 cm", "65 cm"],
-      },
-    ],
-  },
-  {
-    slug: "easy-sweatpants",
-    name: "Easy sweatpants",
+    slug: "suede-desert-boots",
+    name: "Suede desert boots", // TEMPLATE name
     description:
-      "Wide straight-leg sweatpants with an elastic waist and back patch pockets.",
-    price: 80,
-    sizes: APPAREL_SIZES,
+      "Mustard suede ankle boots with a chunky crepe-style sole and contrast laces.", // TEMPLATE
+    price: 130, // TEMPLATE price
+    sizes: ["EU 39", "EU 40", "EU 41", "EU 42", "EU 43", "EU 44", "EU 45"],
     colorways: [
-      colourway("easy-sweatpants", "sand", "Sand", "#d9c4a1", "#a8906b"),
-      colourway("easy-sweatpants", "ink", "Ink", "#2a2d33", "#3a3d42"),
-      colourway("easy-sweatpants", "rose", "Rose", "#e4a6c1", "#c0628f", ["S"]),
-      colourway("easy-sweatpants", "lime", "Lime", "#c8db5c", "#7f9a2c"),
+      {
+        id: "mustard",
+        name: "Mustard",
+        swatch: "#d4a017",
+        background: "#6b5212",
+        images: [cutout("ED241682"), cutout("ED241683"), cutout("ED241573")],
+        soldOutSizes: ["EU 39"],
+      },
     ],
+    // TEMPLATE measurements.
     sizeChart: [
+      { label: "UK size", values: ["6", "6.5", "7.5", "8", "9", "10", "10.5"] },
       {
-        label: "Waist (relaxed)",
-        values: ["68 cm", "72 cm", "76 cm", "80 cm", "84 cm", "88 cm"],
+        label: "Foot length",
+        values: [
+          "24.5 cm",
+          "25.2 cm",
+          "26 cm",
+          "26.7 cm",
+          "27.4 cm",
+          "28.1 cm",
+          "28.8 cm",
+        ],
       },
-      {
-        label: "Inseam",
-        values: ["74 cm", "76 cm", "78 cm", "80 cm", "82 cm", "84 cm"],
-      },
-      {
-        label: "Leg opening",
-        values: ["24 cm", "25 cm", "26 cm", "27 cm", "28 cm", "29 cm"],
-      },
-    ],
-  },
-  {
-    slug: "heavy-tee",
-    name: "Heavy tee",
-    description:
-      "Boxy 260 gsm cotton T-shirt with a ribbed neck that keeps its shape.",
-    price: 45,
-    sizes: APPAREL_SIZES,
-    colorways: [
-      colourway("heavy-tee", "chalk", "Chalk", "#f2f1ec", "#8d9196"),
-      colourway("heavy-tee", "cobalt", "Cobalt", "#3554b4", "#2a4590"),
-      colourway("heavy-tee", "rust", "Rust", "#a8532f", "#7e3d24", [
-        "XS",
-        "XXL",
-      ]),
-    ],
-    sizeChart: [
-      {
-        label: "Chest width",
-        values: ["53 cm", "56 cm", "59 cm", "62 cm", "65 cm", "68 cm"],
-      },
-      {
-        label: "Body length",
-        values: ["68 cm", "70 cm", "72 cm", "74 cm", "76 cm", "78 cm"],
-      },
-    ],
-  },
-  {
-    slug: "six-panel-cap",
-    name: "Six-panel cap",
-    description:
-      "Washed cotton cap with a curved brim and an adjustable strap.",
-    price: 35,
-    sizes: [],
-    colorways: [
-      colourway("six-panel-cap", "ink", "Ink", "#2a2d33", "#3a3d42"),
-      colourway("six-panel-cap", "moss", "Moss", "#5b7046", "#3f5a3a"),
-    ],
-  },
-  {
-    slug: "crew-socks",
-    name: "Crew socks, 2 pairs",
-    description: "Cushioned cotton-blend crew socks. One size fits most.",
-    price: 18,
-    sizes: [],
-    colorways: [
-      colourway("crew-socks", "stone", "Stone", "#babdc2", "#7c828b"),
-      colourway("crew-socks", "lilac", "Lilac", "#c5b8e4", "#8b7cb8"),
     ],
   },
 ];
 
-// The page colour used before the visitor points at anything.
-export const DEFAULT_BACKGROUND = "#6f9fcf";
+// The page colour used before the visitor points at anything: deep denim.
+export const DEFAULT_BACKGROUND = "#2f5a7a";
 
 // Find a product by the slug in the page address.
 export function findProduct(slug: string | undefined) {
   return PRODUCTS.find((p) => p.slug === slug);
 }
 
-// Every colourway as its own item, for the floating homepage layout.
-export const HOME_ITEMS = PRODUCTS.flatMap((product) =>
-  product.colorways.map((colorway) => ({ product, colorway })),
-);
+// What floats on the homepage: one entry per cut-out picture. Several pictures can
+// point to the same product, and each has its own page colour, picked from the photo
+// (sky, denim, grass, the yellow tote, the gold rhino...).
+export interface HomeItem {
+  id: string;
+  product: Product;
+  colorway: Colorway;
+  image: string;
+  background: string;
+}
+
+// Helper to build a homepage entry from a product slug, a picture and a colour.
+function homeItem(
+  slug: string,
+  pictureId: string,
+  background: string,
+): HomeItem {
+  const product = findProduct(slug)!;
+  return {
+    id: pictureId,
+    product,
+    colorway: product.colorways[0],
+    image: cutout(pictureId),
+    background,
+  };
+}
+
+// The homepage items, in the order they appear (left to right, top to bottom).
+export const HOME_ITEMS: HomeItem[] = [
+  homeItem("denim-suit", "ED241552", "#2f5a7a"), // denim
+  homeItem("suede-desert-boots", "ED241682", "#6b5212"), // mustard suede
+  homeItem("denim-suit", "ED241613", "#4f7a3e"), // hillside grass
+  homeItem("denim-suit", "ED241633", "#b5a127"), // yellow tote
+  homeItem("suede-desert-boots", "ED241573", "#8a6a2a"), // gold rhino
+  homeItem("denim-suit", "ED241547", "#5d93b8"), // open sky
+  homeItem("suede-desert-boots", "ED241683", "#35502f"), // cactus green
+  homeItem("denim-suit", "ED241702", "#7fa3bf"), // pale sky
+  homeItem("denim-suit", "ED241686", "#3f6a4a"), // far hills
+];

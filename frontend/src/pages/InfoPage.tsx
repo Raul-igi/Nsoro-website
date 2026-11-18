@@ -59,7 +59,7 @@ export function AccountPage() {
         Customer accounts are coming soon. For now you can shop and check out
         without signing in.
       </p>
-      <Link to="/" className="font-semibold underline underline-offset-4">
+      <Link to="/shop" className="font-semibold underline underline-offset-4">
         Back to the shop
       </Link>
     </InfoCard>
@@ -73,7 +73,7 @@ export function NotFoundPage() {
       <p>
         This page doesn't exist. It may have moved, or the link may be mistyped.
       </p>
-      <Link to="/" className="font-semibold underline underline-offset-4">
+      <Link to="/shop" className="font-semibold underline underline-offset-4">
         Back to the shop
       </Link>
     </InfoCard>

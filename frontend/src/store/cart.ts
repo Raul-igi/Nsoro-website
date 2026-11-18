@@ -66,7 +66,17 @@ export const useCart = create<CartState>()(
         set((state) => ({ lines: state.lines.filter((_, i) => i !== index) })),
       clear: () => set({ lines: [] }),
     }),
-    { name: "nsoro-cart" },
+    {
+      name: "nsoro-cart",
+      // When a saved cart is loaded, drop any lines whose product no longer exists,
+      // so the cart never shows (or counts) items that can't be bought.
+      merge: (saved, current) => ({
+        ...current,
+        lines: ((saved as Partial<CartState> | undefined)?.lines ?? []).filter(
+          (line) => resolveLine(line) !== null,
+        ),
+      }),
+    },
   ),
 );
 
@@ -80,8 +90,12 @@ export function resolveLine(line: CartLine) {
 }
 
 // Total number of items, e.g. for the count bubble in the header.
+// Lines for products that no longer exist (e.g. an old saved cart) aren't counted.
 export function countItems(lines: CartLine[]) {
-  return lines.reduce((sum, line) => sum + line.quantity, 0);
+  return lines.reduce(
+    (sum, line) => sum + (resolveLine(line) ? line.quantity : 0),
+    0,
+  );
 }
 
 // Sum of all line totals, before shipping.

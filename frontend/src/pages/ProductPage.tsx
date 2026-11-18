@@ -1,5 +1,6 @@
 // ProductPage: one product, with the page turned to the chosen colour.
-// The pictures (front, back, close-up) are stacked so you scroll through the angles;
+// The pictures (cut-outs, then any full campaign photos) are stacked so you scroll
+// through the angles;
 // thumbnails sit bottom-left, and the details card and add-to-cart bar sit bottom-right.
 import { useEffect, useRef, useState } from "react";
 import { Link, useParams, useSearchParams } from "react-router";
@@ -23,7 +24,7 @@ export function ProductPage() {
             This product isn't available
           </h1>
           <Link
-            to="/"
+            to="/shop"
             className="mt-4 inline-block underline underline-offset-4"
           >
             Back to the shop
@@ -114,10 +115,12 @@ function ProductView({ product, colorwayId, onPickColour }: ViewProps) {
 
   return (
     <main className="relative pb-24 lg:pb-0">
-      {/* The stacked pictures, one screen-height each. On wide screens the right side
-          is kept free for the details card (420px wide + gaps), so pictures are centred
-          in the space to its left and never slide underneath the card. */}
-      <div className="flex flex-col items-center pt-20 lg:pt-0 lg:pr-[468px]">
+      {/* The stacked pictures, one screen-height each, centred on the page.
+          On wide screens each picture is limited in width so it stays clear of the
+          details card: the card plus its gaps takes 428px on the right, so the picture
+          may use the page width minus that amount on both sides (at most 520px, and
+          never smaller than 220px). */}
+      <div className="flex flex-col items-center pt-20 lg:pt-0">
         {colorway.images.map((src, index) => (
           <div
             key={src}
@@ -129,8 +132,14 @@ function ProductView({ product, colorwayId, onPickColour }: ViewProps) {
           >
             <img
               src={src}
-              alt={`${product.name} in ${colorway.name}, ${["front", "back", "close-up"][index] ?? "view"}`}
-              className="max-h-[58dvh] w-full max-w-[520px] object-contain lg:max-h-[64dvh]"
+              alt={`${product.name} in ${colorway.name}, picture ${index + 1} of ${colorway.images.length}`}
+              // Cut-outs float freely; full campaign photos (from /lookbook/) keep
+              // their natural shape and get soft corners and a shadow like a print.
+              className={`max-h-[58dvh] max-w-[520px] object-contain lg:max-h-[64dvh] lg:max-w-[max(220px,min(520px,calc(100vw-856px)))] ${
+                src.includes("/lookbook/")
+                  ? "w-auto rounded-lg shadow-2xl"
+                  : "w-full"
+              }`}
             />
           </div>
         ))}
@@ -158,7 +167,7 @@ function ProductView({ product, colorwayId, onPickColour }: ViewProps) {
 
       {/* Details card and add-to-cart: fixed bottom-right on wide screens,
           and in the normal page flow (after the pictures) on phones. */}
-      <aside className="z-10 px-4 pb-6 lg:fixed lg:right-6 lg:bottom-6 lg:w-[420px] lg:px-0 lg:pb-0">
+      <aside className="z-10 px-4 pb-6 lg:fixed lg:right-6 lg:bottom-6 lg:w-[380px] lg:px-0 lg:pb-0">
         <div className="glass rounded-2xl p-5">
           {/* Name and description. */}
           <h1 className="text-[1.75rem] leading-tight font-bold uppercase [font-stretch:118%]">

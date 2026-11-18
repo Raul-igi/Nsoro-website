@@ -83,6 +83,12 @@ body {
   animation: drift 38s ease-in-out infinite alternate;
 }
 
+/* Right after the page loads, colours change instantly (no fade), so a product page
+   opens straight in its own colour. ColorField removes this class a moment later. */
+.color-field--instant {
+  transition: none;
+}
+
 /* Film-grain texture laid over the colour, like Skylark's speckled look. */
 .color-field::after {
   content: "";

@@ -41,14 +41,10 @@ export function CheckoutPage() {
       {/* Top bar: logo back to the shop, bag icon back to the shop too. */}
       <header className="border-b border-mist">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-5 sm:px-8">
-          <Link
-            to="/"
-            aria-label="Nsoro, back to the shop"
-            className="text-slate/80"
-          >
+          <Link to="/" aria-label="Nsoro home" className="text-slate/80">
             <span className="logo-mark block h-6 w-32" />
           </Link>
-          <Link to="/" aria-label="Back to the shop" className="text-slate">
+          <Link to="/shop" aria-label="Back to the shop" className="text-slate">
             <BagIcon />
           </Link>
         </div>
@@ -62,7 +58,7 @@ export function CheckoutPage() {
             Add something from the shop to check out.
           </p>
           <Link
-            to="/"
+            to="/shop"
             className="mt-6 inline-block font-semibold underline underline-offset-4"
           >
             Browse the shop

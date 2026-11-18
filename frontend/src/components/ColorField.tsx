@@ -1,12 +1,21 @@
 // ColorField: the full-screen colour background. Whenever the chosen colour changes
 // (hovering a product, opening a product page), it works out a lighter and darker
 // partner colour and picks white or ink text so everything stays readable.
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useUi } from "../store/ui";
 import { luminance, shade } from "../lib/color";
 
 export function ColorField() {
   const background = useUi((s) => s.background);
+  // The colour fade is switched off for the first moment after the page loads, so a
+  // product page opens straight in its own colour instead of fading from the default.
+  const [fade, setFade] = useState(false);
+
+  // Turn the fade on shortly after the page first appears.
+  useEffect(() => {
+    const timer = setTimeout(() => setFade(true), 400);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Write the colours onto the page root so every element (glass, text) can use them.
   useEffect(() => {
@@ -21,5 +30,10 @@ export function ColorField() {
     );
   }, [background]);
 
-  return <div className="color-field" aria-hidden="true" />;
+  return (
+    <div
+      className={`color-field ${fade ? "" : "color-field--instant"}`}
+      aria-hidden="true"
+    />
+  );
 }

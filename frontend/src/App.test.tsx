@@ -22,43 +22,65 @@ beforeEach(() => {
   useUi.setState({ cartOpen: false, menuOpen: false });
 });
 
-describe("homepage", () => {
-  // Every colour of every product should be on the homepage as a link.
-  it("shows every product colour", () => {
+describe("welcome page", () => {
+  // The welcome page shows the campaign headline and a Discover button into the shop.
+  it("shows the headline and links Discover to the shop", () => {
     renderAt("/");
-    for (const { product, colorway } of HOME_ITEMS) {
-      expect(
-        screen.getByRole("link", {
-          name: new RegExp(`${product.name}, ${colorway.name},`),
-        }),
-      ).toBeInTheDocument();
-    }
+    expect(
+      screen.getByRole("heading", { name: "Gorillas must be aliens" }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Discover" })).toHaveAttribute(
+      "href",
+      "/shop",
+    );
+  });
+
+  // The hamburger opens the menu, which lists the shop pages.
+  it("opens the menu from the hamburger button", async () => {
+    renderAt("/");
+    await userEvent.click(screen.getByRole("button", { name: "Open menu" }));
+    const menu = screen.getByRole("navigation", { name: "Main" });
+    expect(
+      within(menu).getByRole("link", { name: "Lookbook" }),
+    ).toBeInTheDocument();
+  });
+});
+
+describe("shop page", () => {
+  // There should be one floating link per homepage picture.
+  it("shows every homepage picture as a product link", () => {
+    renderAt("/shop");
+    const links = screen
+      .getAllByRole("link")
+      .filter((l) => l.getAttribute("href")?.startsWith("/product/"));
+    expect(links).toHaveLength(HOME_ITEMS.length);
   });
 
   // Pointing at an item turns the page that item's colour.
   it("changes the background colour on hover", async () => {
-    renderAt("/");
-    const { product, colorway } = HOME_ITEMS[0];
-    await userEvent.hover(
-      screen.getByRole("link", {
-        name: new RegExp(`${product.name}, ${colorway.name},`),
-      }),
-    );
-    expect(useUi.getState().background).toBe(colorway.background);
+    renderAt("/shop");
+    const item = HOME_ITEMS[1];
+    const link = screen
+      .getAllByRole("link")
+      .filter((l) => l.getAttribute("href")?.startsWith("/product/"))[1];
+    await userEvent.hover(link);
+    expect(useUi.getState().background).toBe(item.background);
   });
 });
 
 describe("product page", () => {
   // Adding to cart puts the chosen size in the cart and opens the cart panel.
   it("adds the chosen size to the cart", async () => {
-    renderAt("/product/heavy-tee?color=rust");
-    // XS is sold out in rust, so it can't be chosen and S is picked to start.
-    expect(screen.getByRole("button", { name: "XS, sold out" })).toBeDisabled();
-    await userEvent.click(screen.getByRole("button", { name: "M" }));
+    renderAt("/product/suede-desert-boots");
+    // EU 39 is sold out, so it can't be chosen and EU 40 is picked to start.
+    expect(
+      screen.getByRole("button", { name: "EU 39, sold out" }),
+    ).toBeDisabled();
+    await userEvent.click(screen.getByRole("button", { name: "EU 42" }));
     await userEvent.click(screen.getByRole("button", { name: /add to cart/i }));
 
     const cart = screen.getByRole("dialog", { name: "Cart" });
-    expect(within(cart).getByText("Size: M")).toBeInTheDocument();
+    expect(within(cart).getByText("Size: EU 42")).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: "Cart, 1 item" }),
     ).toBeInTheDocument();
@@ -73,17 +95,27 @@ describe("product page", () => {
   });
 });
 
+describe("lookbook", () => {
+  // All 15 campaign photos appear on the lookbook page.
+  it("shows every campaign photo", () => {
+    renderAt("/lookbook");
+    expect(screen.getAllByRole("button", { name: /^Open photo/ })).toHaveLength(
+      15,
+    );
+  });
+});
+
 describe("cart maths", () => {
   // Adding the same item twice raises its quantity rather than adding a new line.
   it("counts items and adds up the subtotal", () => {
     const { add } = useCart.getState();
-    add({ slug: "heavy-tee", colorwayId: "chalk", size: "M" });
-    add({ slug: "heavy-tee", colorwayId: "chalk", size: "M" });
-    add({ slug: "crew-socks", colorwayId: "stone", size: null });
+    add({ slug: "denim-suit", colorwayId: "denim", size: "M" });
+    add({ slug: "denim-suit", colorwayId: "denim", size: "M" });
+    add({ slug: "suede-desert-boots", colorwayId: "mustard", size: "EU 42" });
     const { lines } = useCart.getState();
     expect(lines).toHaveLength(2);
     expect(countItems(lines)).toBe(3);
-    expect(subtotal(lines)).toBe(45 * 2 + 18);
+    expect(subtotal(lines)).toBe(240 * 2 + 130);
   });
 });
 

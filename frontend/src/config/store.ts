@@ -32,7 +32,8 @@ export const SHIPPING_COUNTRIES = [
 
 // Menu links shown when the "+" menu opens. External links open in a new tab.
 export const MENU_LINKS = [
-  { label: "Shop", to: "/" },
+  { label: "Shop", to: "/shop" },
+  { label: "Lookbook", to: "/lookbook" },
   { label: "Contact", to: "/contact" },
   { label: "Policies", to: "/policies" },
   { label: "Instagram", to: "https://instagram.com", external: true },

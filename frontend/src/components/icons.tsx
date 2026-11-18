@@ -50,3 +50,12 @@ export function BagIcon() {
     </svg>
   );
 }
+
+// Three lines (the "hamburger"): opens the menu.
+export function MenuIcon() {
+  return (
+    <svg {...base} width={22} height={22} strokeWidth={1.8}>
+      <path d="M3 6h18M3 12h18M3 18h18" />
+    </svg>
+  );
+}

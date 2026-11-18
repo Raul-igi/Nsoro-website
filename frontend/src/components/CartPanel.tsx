@@ -1,4 +1,4 @@
-// CartPanel: the cart that drops down under the logo (like the inspo screenshots).
+// CartPanel: the cart that drops down under the bag icon at the top right.
 // It lists each item with its picture, colour, size and quantity controls,
 // then the subtotal and a checkout button. The rest of the page is frosted behind it.
 import { useEffect } from "react";
@@ -37,7 +37,7 @@ export function CartPanel() {
       <section
         role="dialog"
         aria-label="Cart"
-        className="glass-solid fixed top-20 left-4 z-30 flex max-h-[calc(100dvh-6rem)] w-[calc(100vw-2rem)] flex-col rounded-2xl sm:top-24 sm:left-6 sm:w-[380px]"
+        className="glass-solid fixed top-16 right-4 z-30 flex max-h-[calc(100dvh-6rem)] w-[calc(100vw-2rem)] flex-col rounded-2xl sm:top-20 sm:right-6 sm:w-[380px]"
       >
         {/* Title row with the close button. */}
         <div className="mx-5 flex items-center justify-between border-b border-ink/15 py-4">
@@ -56,7 +56,7 @@ export function CartPanel() {
           <div className="px-5 py-10 text-center">
             <p className="text-slate">Your cart is empty.</p>
             <Link
-              to="/"
+              to="/shop"
               onClick={() => setCartOpen(false)}
               className="mt-4 inline-block font-semibold underline underline-offset-4"
             >
