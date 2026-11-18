@@ -3,16 +3,19 @@
 
 /* Fonts, served from our own site (no outside requests):
    - Archivo (variable): wide and heavy for names and titles, normal width for reading.
-   - IBM Plex Mono: the small bracketed labels like [ SAND ] and sizes. */
+   - IBM Plex Mono: the small bracketed labels like [ SAND ] and sizes.
+   - Pinyon Script: the handwritten welcome headline (free for commercial use, OFL). */
 @import "@fontsource-variable/archivo/wdth.css";
 @import "@fontsource/ibm-plex-mono/400.css";
 @import "@fontsource/ibm-plex-mono/500.css";
+@import "@fontsource/pinyon-script/400.css";
 
 /* Design tokens: named fonts and colours we reuse through Tailwind classes
-   (e.g. `font-display`, `text-ink`). */
+   (e.g. `font-script`, `text-ink`). */
 @theme {
   --font-sans: "Archivo Variable", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  --font-script: "Pinyon Script", cursive;
   --color-ink: #1d2024;
   --color-paper: #f5f7fa;
   --color-mist: #e3e8ee;

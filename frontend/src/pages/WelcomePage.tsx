@@ -28,8 +28,10 @@ export function WelcomePage() {
 
       {/* Headline and button, centred near the bottom of the screen. */}
       <div className="absolute inset-x-0 bottom-0 flex flex-col items-center px-5 pb-14 text-center sm:pb-16">
-        <h1 className="max-w-[16ch] text-[2.6rem] leading-[0.95] font-semibold uppercase [font-stretch:112%] sm:text-[4.2rem] lg:max-w-[20ch] lg:text-[5.2rem]">
-          Gorillas must be aliens
+        {/* The headline in the Pinyon Script handwriting font. Script letters look
+            small next to block capitals, so it is set larger, with each word capitalised. */}
+        <h1 className="font-script max-w-[14ch] text-[3.6rem] leading-[1.05] font-normal drop-shadow-[0_2px_12px_rgb(0_0_0/0.35)] sm:text-[5.6rem] lg:max-w-[20ch] lg:text-[7rem]">
+          Gorillas Must Be Aliens
         </h1>
 
         {/* Discover: goes to the shop page with all the floating products. */}

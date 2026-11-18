@@ -27,7 +27,7 @@ describe("welcome page", () => {
   it("shows the headline and links Discover to the shop", () => {
     renderAt("/");
     expect(
-      screen.getByRole("heading", { name: "Gorillas must be aliens" }),
+      screen.getByRole("heading", { name: "Gorillas Must Be Aliens" }),
     ).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Discover" })).toHaveAttribute(
       "href",
