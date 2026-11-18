@@ -68,6 +68,24 @@ describe("shop page", () => {
   });
 });
 
+describe("shop page on a touch screen", () => {
+  // Act like a phone for these tests, then go back to a mouse computer afterwards.
+  beforeEach(() => {
+    globalThis.__touchScreen = true;
+  });
+  afterEach(() => {
+    globalThis.__touchScreen = false;
+  });
+
+  // Phones get one product per screen, a position counter, and the first
+  // product's colour straight away (there's no mouse to hover with).
+  it("shows products one at a time and colours the page by the first one", () => {
+    renderAt("/shop");
+    expect(screen.getByText(`1 / ${HOME_ITEMS.length}`)).toBeInTheDocument();
+    expect(useUi.getState().background).toBe(HOME_ITEMS[0].background);
+  });
+});
+
 describe("product page", () => {
   // Adding to cart puts the chosen size in the cart and opens the cart panel.
   it("adds the chosen size to the cart", async () => {
